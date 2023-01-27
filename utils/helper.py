@@ -16,8 +16,8 @@ def softmax_Layer(temp=1,NUM_CLASS=10):
 
 def lr_scheduler(lr,epoch):
   if epoch == 5:
-    return 0.0001
-  return lr
+    return lr*10;
+  return lr;
 
 def run_optimizer(model,optimizer,loss_object, x , y_true):
     x = tf.convert_to_tensor(x)
@@ -80,7 +80,9 @@ def train(model,loss_object, train , test ,train_acc_metric, val_acc_metric, epo
     lr = INIT_LEARNING_RATE
 
     for epoch in range(epochs):
+        lr = lr*0.98;
         lr = lr_scheduler(lr,epoch)
+
         optimizer = tk.optimizers.Adam(learning_rate=lr)
 
         print('Start of epoch %d' % (epoch,))
@@ -105,3 +107,91 @@ def train(model,loss_object, train , test ,train_acc_metric, val_acc_metric, epo
           break;
     history['model'] = model
     return history
+
+
+def getAutoSettings(runtimename):
+  stage_paramaters = []
+  batch_size = None;
+  height = None
+  width = None
+  init_lr = None
+
+
+  if runtimename == "cifar10":
+    stage_paramaters.append([1.00,1.00,2,0.70])
+    stage_paramaters.append([1.02,0.99,2,0.72])
+    stage_paramaters.append([1.04,0.98,2,0.73])
+    stage_paramaters.append([1.07,0.97,2,0.75])
+    batch_size = 256;
+    height = 32;
+    width = 32;
+    init_lr = 1e-4;
+  
+  if runtimename == "cifar50":
+    stage_paramaters.append([1.00,1.00,10,0.98])
+    stage_paramaters.append([1.02,0.99,10,0.98])
+    stage_paramaters.append([1.04,0.98,10,0.98])
+    stage_paramaters.append([1.07,0.97,10,0.98])
+    batch_size = 256;
+    height = 32;
+    width = 32;
+    init_lr = 1e-4;
+
+  if runtimename == "cifar100":
+    stage_paramaters.append([1.00,1.00,10,0.98])
+    stage_paramaters.append([1.02,0.99,10,0.98])
+    stage_paramaters.append([1.04,0.98,10,0.98])
+    stage_paramaters.append([1.07,0.97,10,0.98])
+    batch_size = 256;
+    height = 32;
+    width = 32;
+    init_lr = 1e-4;
+
+  if runtimename == "fmnist10":
+    stage_paramaters.append([1.00,1.00,10,0.88])
+    stage_paramaters.append([1.05,0.98,10,0.89])
+    stage_paramaters.append([1.10,0.96,10,0.89])
+    batch_size = 256;
+    height = 28;
+    width = 28;
+    init_lr = 1e-3;
+
+  if runtimename == "fmnist50":
+    stage_paramaters.append([1.00,1.00,10,0.84])
+    stage_paramaters.append([1.05,0.98,10,0.85])
+    stage_paramaters.append([1.10,0.96,10,0.85])
+    batch_size = 256;
+    height = 28;
+    width = 28;
+    init_lr = 1e-3;
+    
+  if runtimename == "fmnist100":
+    stage_paramaters.append([1.00,1.00,10,0.80])
+    stage_paramaters.append([1.05,0.98,10,0.81])
+    stage_paramaters.append([1.10,0.96,10,0.82])
+    batch_size = 256;
+    height = 28;
+    width = 28;
+    init_lr = 1e-3;
+
+  if runtimename == "ham10000":
+    stage_paramaters.append([1.00,1.00,20,0.80])
+    stage_paramaters.append([1.02,0.99,20,0.82])
+    stage_paramaters.append([1.04,0.98,20,0.84])
+    batch_size = 32;
+    height = 224;
+    width = 224;
+    init_lr = 1e-4;
+
+  if runtimename == "aptos":
+    stage_paramaters.append([1.00,1.00,10,0.80])
+    stage_paramaters.append([1.05,0.99,10,0.81])
+    stage_paramaters.append([1.10,0.98,10,0.82])
+    stage_paramaters.append([1.15,0.97,10,0.83])
+    stage_paramaters.append([1.20,0.97,10,0.83])
+    batch_size = 64;
+    height = 224;
+    width = 224;
+    init_lr = 1e-4;
+
+  return batch_size, height, width, init_lr, stage_paramaters;

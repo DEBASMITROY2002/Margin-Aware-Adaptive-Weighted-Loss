@@ -12,29 +12,40 @@ from MAAW import *
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--runtimename', type=str, default = './', help='Directory where the image data is stored')
-# parser.add_argument('--epochs', type=int, default = 10, help='Number of Epochs of training')
-# parser.add_argument('--batch_size', type=int, default = 32, help='Batch size for training')
-# parser.add_argument('--learning_rate', type=float, default = 0.0001, help='Learning Rate')
-# parser.add_argument('--stepLR', type=int, default=5, help='Step size for Step LR scheduler')
+parser.add_argument('--auto', type=bool, default = False, help='Autometic Parameter Setting According To Runtime')
+parser.add_argument('--model_save', type=bool, default = False, help='Autometic Model Save')
+parser.add_argument('--batch_size', type=int, default = 256, help='Batch size for training')
+parser.add_argument('--height', type=int, default = 32, help='Height Of Image')
+parser.add_argument('--width', type=int, default = 32, help='Width Of Image')
+parser.add_argument('--init_learning_rate', type=float, default = 0.0001, help='Initial Learning Rate')
 args = parser.parse_args()
 
 runtimename = args.runtimename;
-model_save_dir = '/saved_models/'
+model_save_dir = 'saved_models/'
 
 """
 
 ##Data Batching"""
 print("=========================== Data Batching ==========================")
 print("Current Run Time : "+runtimename)
-BATCH_SIZE = 256
-HEIGHT = 32
-WIDTH = 32
-INIT_LEARNING_RATE = 1e-4
+BATCH_SIZE = args.batch_size;
+HEIGHT = args.height;
+WIDTH = args.width;
+INIT_LEARNING_RATE = args.init_learning_rate
 
-train_generator,validation_generator = data_generator(runtimename, BATCH_SIZE, HEIGHT, WIDTH)
+BATCH_SIZE, HEIGHT, WIDTH, INIT_LEARNING_RATE, stage_paramaters = getAutoSettings(runtimename);
+train_generator,validation_generator,auto_t_steps_per_epoch,auto_v_steps_per_epoch = data_generator(runtimename, BATCH_SIZE, HEIGHT, WIDTH)
 
-auto_t_steps_per_epoch = train_generator.n//BATCH_SIZE
-auto_v_steps_per_epoch = validation_generator.n//BATCH_SIZE
+print("----- Automatic Paramters -----")
+print("Batch Size : ",BATCH_SIZE)
+print("Height : ",HEIGHT)
+print("Width : ",WIDTH)
+print("INIT_LEARNING_RATE : ",INIT_LEARNING_RATE)
+print("Stage Paramters: ",stage_paramaters)
+print("-------------------------------")
+auto_t_steps_per_epoch = 3
+auto_v_steps_per_epoch = 3
+
 NUM_CLASS = train_generator.num_classes
 test_generator = validation_generator
 
@@ -58,19 +69,15 @@ STAGE = 0
 
 print("=========================== Model Run ==========================")
 
-while True:
+for alpha,beta,max_epoch,val_acc_thresh in stage_paramaters:
   print("========== STAGE "+str(STAGE)+" ==========")
   STAGE = STAGE+1
-  alpha = float(input("alpha: "))
-  beta = float(input("beta: "))
-  max_epoch = int(input("max_epoch: "))
-  val_acc_thresh = float(input("val_acc_thresh: "))
+  print("****** Current Parameters : alpha = "+str(alpha)+", beta = "+str(beta)+", max_epoch = "+str(max_epoch)+", val_acc_thresh = "+str(val_acc_thresh)+" *******")
+
   loss_object = SparseCategorical_LSM_DWB_Loss(maj_wt=alpha,min_wt=beta)
-  history = train(model,loss_object, train_generator , validation_generator, train_acc_metric, val_acc_metric, epochs = max_epoch,t_steps_per_epoch=5,v_steps_per_epoch=5,val_acc_threshold=val_acc_thresh,INIT_LEARNING_RATE=INIT_LEARNING_RATE)
+  history = train(model,loss_object, train_generator , validation_generator, train_acc_metric, val_acc_metric, epochs = max_epoch,t_steps_per_epoch=auto_t_steps_per_epoch,v_steps_per_epoch=auto_v_steps_per_epoch,val_acc_threshold=val_acc_thresh,INIT_LEARNING_RATE=INIT_LEARNING_RATE)
   MODELS.append(model)
   HISTORYS.append(history)
-  model.save(model_save_dir+runtimename+str(alpha)+"_"+str(beta)+".h5")
-  print("[ Model Saved As "+model_save_dir+runtimename+str(alpha)+"_"+str(beta)+".h5 ]")
-  computePerformance(x_test, y_test, model)
-  if input('Do You Want To Continue? y/n') != 'y':
-    break
+  model.save(model_save_dir+runtimename+"_"+str(int(alpha*100))+"_"+str(int(beta*100))+".h5")
+  print("[ Model Saved As "+model_save_dir+runtimename+"_"+str(alpha)+"_"+str(beta)+".h5 ]")
+  computePerformance(x_test, y_test, model);

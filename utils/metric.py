@@ -3,11 +3,14 @@ import imblearn.metrics
 from sklearn.metrics import cohen_kappa_score
 import tensorflow as tf
 import matplotlib.pyplot as plt
+import numpy as np
+from tqdm import tqdm
+from utils.helper import *
 
 def computePerformance(x, y,model):
     print("~ Validation Starts ~")
     y_pred = model.predict(x)
-    y_pred = softMaxLayer(y_pred)
+    y_pred = softmax_Layer()(y_pred)
     y_pred_classes = np.argmax(y_pred, axis = 1) 
     y_true_classes = np.argmax(y, axis = 1) 
     

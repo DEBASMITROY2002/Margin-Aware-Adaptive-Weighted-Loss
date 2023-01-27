@@ -24,13 +24,14 @@ model_save_dir = '/saved_models/'
 """
 
 ##Data Batching"""
-
+print("=========================== Data Batching ==========================")
+print("Current Run Time : "+runtimename)
 BATCH_SIZE = 256
 HEIGHT = 32
 WIDTH = 32
 INIT_LEARNING_RATE = 1e-4
 
-train_generator,validation_generator = data_generator(BATCH_SIZE, HEIGHT, WIDTH)
+train_generator,validation_generator = data_generator(runtimename, BATCH_SIZE, HEIGHT, WIDTH)
 
 auto_t_steps_per_epoch = train_generator.n//BATCH_SIZE
 auto_v_steps_per_epoch = validation_generator.n//BATCH_SIZE
@@ -41,7 +42,7 @@ train_acc_metric = tf.keras.metrics.CategoricalAccuracy()
 val_acc_metric   = tf.keras.metrics.CategoricalAccuracy()
 
 """## Run"""
-
+print("=========================== Model Warming UP ==========================")
 model = getmodel(runtimename, NUM_CLASS)
 
 x_test, y_test = (next(test_generator))
@@ -54,6 +55,8 @@ for i in range(auto_v_steps_per_epoch):
 MODELS = []
 HISTORYS = []
 STAGE = 0
+
+print("=========================== Model Run ==========================")
 
 while True:
   print("========== STAGE "+str(STAGE)+" ==========")

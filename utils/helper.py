@@ -1,6 +1,8 @@
 import tensorflow.keras as K
 import tensorflow as tf
 import tensorflow.keras as tk
+import numpy as np
+from tqdm import tqdm
 
 def modifiedcos(theta):
   theta = tf.convert_to_tensor(theta,dtype=tf.float32)

@@ -59,7 +59,8 @@ def fmnistutil(irs):
 
   auto_t_steps_per_epoch = x_train_imb.shape[0]//batch_size_train
   auto_v_steps_per_epoch = x_test_imb.shape[0]//batch_size_test
-  return train_generator,test_generator,auto_t_steps_per_epoch,auto_v_steps_per_epoch
+  return train_generator,test_generator,auto_t_steps_per_epoch,auto_v_steps_per_epoch,10
+
 
 
 def data_generator(runtimename, BATCH_SIZE, HEIGHT, WIDTH):
@@ -87,7 +88,7 @@ def data_generator(runtimename, BATCH_SIZE, HEIGHT, WIDTH):
             class_mode = 'categorical',
             target_size = (HEIGHT,WIDTH)
         );
-        return train_generator,validation_generator,train_generator.n//BATCH_SIZE,validation_generator.n//BATCH_SIZE;
+        return train_generator,validation_generator,train_generator.n//BATCH_SIZE,validation_generator.n//BATCH_SIZE,train_generator.num_classes;
 
     if runtimename == 'cifar50':
         train_generator = train_datagen.flow_from_directory(
@@ -103,7 +104,7 @@ def data_generator(runtimename, BATCH_SIZE, HEIGHT, WIDTH):
             class_mode = 'categorical',
             target_size = (HEIGHT,WIDTH)
         );
-        return train_generator,validation_generator,train_generator.n//BATCH_SIZE,validation_generator.n//BATCH_SIZE;
+        return train_generator,validation_generator,train_generator.n//BATCH_SIZE,validation_generator.n//BATCH_SIZE,train_generator.num_classes;
     if runtimename == 'cifar100':
         train_generator = train_datagen.flow_from_directory(
             'Data/cifar100/cifar100_train',
@@ -118,7 +119,7 @@ def data_generator(runtimename, BATCH_SIZE, HEIGHT, WIDTH):
             class_mode = 'categorical',
             target_size = (HEIGHT,WIDTH)
         );
-        return train_generator,validation_generator,train_generator.n//BATCH_SIZE,validation_generator.n//BATCH_SIZE;
+        return train_generator,validation_generator,train_generator.n//BATCH_SIZE,validation_generator.n//BATCH_SIZE,train_generator.num_classes;
         
     if runtimename == 'fmnist10':
         return fmnistutil([0.1, 0.1, 0.1, 0.1, 0.01, 1.0, 1.0, 1.0, 1.0, 1.0])
@@ -140,7 +141,7 @@ def data_generator(runtimename, BATCH_SIZE, HEIGHT, WIDTH):
             class_mode = 'categorical',
             target_size = (HEIGHT,WIDTH)
         );
-        return train_generator,validation_generator,train_generator.n//BATCH_SIZE,validation_generator.n//BATCH_SIZE;
+        return train_generator,validation_generator,train_generator.n//BATCH_SIZE,validation_generator.n//BATCH_SIZE,train_generator.num_classes;
 
     if runtimename == 'aptos':
         datagen=ImageDataGenerator(rescale=1./255., validation_split=0.2)
@@ -159,4 +160,4 @@ def data_generator(runtimename, BATCH_SIZE, HEIGHT, WIDTH):
             class_mode="categorical",    
             target_size=(HEIGHT, WIDTH),
             subset='validation')  
-        return train_generator,validation_generator,train_generator.n//BATCH_SIZE,validation_generator.n//BATCH_SIZE;
+        return train_generator,validation_generator,train_generator.n//BATCH_SIZE,validation_generator.n//BATCH_SIZE,train_generator.num_classes;

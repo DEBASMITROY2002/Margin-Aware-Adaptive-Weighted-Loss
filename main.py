@@ -11,23 +11,16 @@ from MAAW import *
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--data_directory', type=str, default = './', help='Directory where the image data is stored')
-parser.add_argument('--epochs', type=int, default = 10, help='Number of Epochs of training')
-parser.add_argument('--batch_size', type=int, default = 32, help='Batch size for training')
-parser.add_argument('--learning_rate', type=float, default = 0.0001, help='Learning Rate')
-parser.add_argument('--stepLR', type=int, default=5, help='Step size for Step LR scheduler')
-args = parser.parse_args()
+# parser.add_argument('--epochs', type=int, default = 10, help='Number of Epochs of training')
+# parser.add_argument('--batch_size', type=int, default = 32, help='Batch size for training')
+# parser.add_argument('--learning_rate', type=float, default = 0.0001, help='Learning Rate')
+# parser.add_argument('--stepLR', type=int, default=5, help='Step size for Step LR scheduler')
+# args = parser.parse_args()
 
 runtimename = 'cifar10'
-model_save_dir = '/content/LSMDWB_Models/'
-base_path_drive = '/content/drive/MyDrive/LSMDWB_DataSet/'
+model_save_dir = '/saved_models/'
 test_dir = '/content/cifar100_test'
 train_dir = '/content/cifar100_train'
-
-with zipfile.ZipFile(base_path_drive+"cifar100_test.zip","r") as zip_ref:
-    zip_ref.extractall(test_dir)
-
-with zipfile.ZipFile(base_path_drive+"cifar100_train.zip","r") as zip_ref:
-    zip_ref.extractall(train_dir)
 
 """
 

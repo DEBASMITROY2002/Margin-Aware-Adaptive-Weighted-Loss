@@ -78,6 +78,7 @@ for alpha,beta,max_epoch,val_acc_thresh in stage_paramaters:
   history = train(model,loss_object, train_generator , validation_generator, train_acc_metric, val_acc_metric, epochs = max_epoch,t_steps_per_epoch=auto_t_steps_per_epoch,v_steps_per_epoch=auto_v_steps_per_epoch,val_acc_threshold=val_acc_thresh,INIT_LEARNING_RATE=INIT_LEARNING_RATE)
   MODELS.append(model)
   HISTORYS.append(history)
-  model.save(model_save_dir+runtimename+"_"+str(int(alpha*100))+"_"+str(int(beta*100))+".h5")
-  print("[ Model Saved As "+model_save_dir+runtimename+"_"+str(alpha)+"_"+str(beta)+".h5 ]")
+  if args.model_save == True:
+    model.save(model_save_dir+runtimename+"_"+str(int(alpha*100))+"_"+str(int(beta*100))+".h5")
+    print("[ Model Saved As "+model_save_dir+runtimename+"_"+str(alpha)+"_"+str(beta)+".h5 ]")
   computePerformance(x_test, y_test, model);
